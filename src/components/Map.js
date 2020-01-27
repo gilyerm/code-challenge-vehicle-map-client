@@ -9,9 +9,11 @@ class Map extends React.Component {
 
     vehicles = [];
     map;
+    selectedFunction;
     constructor(props, context) {
         super(props, context);
         this.vehicles = props.vehicles;
+        this.selectedFunction = props.selectedFunction
     }
 
     componentDidMount() {
@@ -40,7 +42,7 @@ class Map extends React.Component {
     updateView(){
         for(let vehicle of this.vehicles){
             let marker = L.marker(vehicle.location);
-            marker.on('click',()=>{console.log(vehicle.id)});
+            marker.on('click',()=>{this.selectedFunction(vehicle)});
             marker.addTo(this.map)
         }
     }

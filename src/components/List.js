@@ -5,10 +5,11 @@ import {ListGroup} from "react-bootstrap";
 class List extends React.Component{
 
     vehicles = [];
-
+    selectedFunction;
     constructor(props, context) {
         super(props, context);
         this.vehicles = props.vehicles;
+        this.selectedFunction = props.selectedFunction
     }
 
     shouldComponentUpdate(nextProps, nextState, nextContext) {
@@ -24,7 +25,7 @@ class List extends React.Component{
         return <div>
             <ListGroup>
                 { this.vehicles.map((vehicle) => {
-                    return <ListGroup.Item action variant="secondary" key={vehicle.id} onClick={()=>console.log(vehicle.id)}>{vehicle.id}</ListGroup.Item>;
+                    return <ListGroup.Item action variant="secondary" key={vehicle.id} onClick={()=>this.selectedFunction(vehicle)}>{vehicle.id}</ListGroup.Item>;
                 })}
             </ListGroup>
         </div>
