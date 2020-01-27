@@ -40,10 +40,13 @@ class Map extends React.Component {
     }
 
     updateView(){
+        let layer = L.layerGroup().addTo(this.map);
+
         for(let vehicle of this.vehicles){
-            let marker = L.marker(vehicle.location);
+            let marker = L.marker(vehicle.location,
+                { title: vehicle.id });
             marker.on('click',()=>{this.selectedFunction(vehicle)});
-            marker.addTo(this.map)
+            marker.addTo(layer)
         }
     }
 
