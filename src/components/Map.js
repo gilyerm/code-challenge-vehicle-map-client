@@ -26,19 +26,22 @@ class Map extends React.Component {
             ]
         });
     }
+
     shouldComponentUpdate(nextProps, nextState, nextContext) {
         if (this.vehicles === nextProps.vehicles){
             return false;
         }else{
             this.vehicles = nextProps.vehicles;
-            // console.log(this.vehicles);
-            for(let vehicle of this.vehicles){
-                console.log(vehicle);
-                let marker = L.marker(vehicle.location);
-                marker.on('click',()=>{console.log(vehicle.id)});
-                marker.addTo(this.map)
-            }
+            this.updateView();
             return true;
+        }
+    }
+
+    updateView(){
+        for(let vehicle of this.vehicles){
+            let marker = L.marker(vehicle.location);
+            marker.on('click',()=>{console.log(vehicle.id)});
+            marker.addTo(this.map)
         }
     }
 

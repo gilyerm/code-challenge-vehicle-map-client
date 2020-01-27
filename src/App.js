@@ -1,25 +1,28 @@
 import React from 'react';
 import 'fetch-json';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
-import { Button } from 'react-bootstrap';
+
+import {Button, Col, Container, Row} from 'react-bootstrap';
 
 import './App.css';
 
 import Map from "./components/Map";
+import List from "./components/List";
 
 
 class App extends React.Component{
 
   constructor(props, context) {
     super(props, context);
-    this.state = { apiResponse : [] }
+    this.state = { vehicles : [] }
   }
 
   callAPI(){
     fetch("http://localhost:9000/testApi")
         .then(res => res.json())
         // .then(res => JSON.parse(res))
-        .then(res =>  this.setState({ apiResponse : res }))
+        .then(res =>  this.setState({ vehicles : res }))
   }
 
   componentDidMount() {
@@ -29,13 +32,14 @@ class App extends React.Component{
   render() {
     return (
         <div className="App">
-          <header className="App-header">
-            
-            <Map vehicles={this.state.apiResponse}/>
-            <p>
-              {/*{this.state.apiResponse}*/}
-            </p>
-          </header>
+          {/*<header className="App-header">*/}
+            <Container>
+              <Row>
+                <Col sm={7}><Map vehicles={this.state.vehicles}/></Col>
+                <Col sm={5} className="scroller"><List vehicles={this.state.vehicles}/></Col>
+              </Row>
+            </Container>
+          {/*</header>*/}
         </div>
     );
   }

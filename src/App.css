@@ -38,5 +38,8 @@
 }
 .leaflet-container {
   height: 600px;
-  width: 600px;
+}
+.scroller {
+  height: 600px;
+  overflow: auto;
 }
