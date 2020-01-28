@@ -14,6 +14,8 @@ import VehicleDetail from "./components/VehicleDetail";
 
 class App extends React.Component{
 
+  path = "https://gilyerm-vehicle-map-server.herokuapp.com/";
+
   fullVehicles = [];  // full list of vehicles
   constructor(props, context) {
     super(props, context);
@@ -22,7 +24,7 @@ class App extends React.Component{
   }
 
   callAPI(){
-    fetch("http://localhost:9000/")
+    fetch(this.path)
         .then(res => res.json())
         .then(res =>  {
           this.setState({ vehicles : res , isFull : true});
@@ -38,7 +40,7 @@ class App extends React.Component{
     let selectedFunction = (selectedVehicle) => {this.setState({selectedVehicle : selectedVehicle})};
     let polygonFunction = (coordinates) =>{
       if (coordinates.length < 3) return; // re-render data only if there is 3 coordinates selected in the map
-      fetch("http://localhost:9000/query/?data="+JSON.stringify(coordinates)) // send request to server to get all vehicles that inside the polygon
+      fetch(this.path+"query/?data="+JSON.stringify(coordinates)) // send request to server to get all vehicles that inside the polygon
           .then(res => res.json())
           .then(res =>  {
             this.setState({ vehicles : res , isFull : false});
