@@ -4,29 +4,32 @@ import {ListGroup} from "react-bootstrap";
 
 class VehicleList extends React.Component{
 
-    vehicles = [];
+    ids = [];
     selectedFunction;
     constructor(props, context) {
         super(props, context);
-        this.vehicles = props.vehicles;
+        this.ids = props.ids;
         this.selectedFunction = props.selectedFunction;
     }
 
     shouldComponentUpdate(nextProps, nextState, nextContext) {
-        if (this.vehicles === nextProps.vehicles){
+        if (this.ids === nextProps.ids){
             return false;
         }else{
-            this.vehicles = nextProps.vehicles;
+            this.ids = nextProps.ids;
+            // console.log(this.ids);
             return true;
         }
     }
 
     render() {
+        // console.log(this.ids);
         return <div>
             <ListGroup>
-                { this.vehicles.map((vehicle) =>
-                    <ListGroup.Item action variant="secondary" key={vehicle.id} onClick={()=>this.selectedFunction(vehicle)}>
-                        {vehicle.id}
+                {
+                    this.ids.map((vehicleid) =>
+                    <ListGroup.Item action variant="secondary" key={vehicleid} onClick={()=>this.selectedFunction(vehicleid)}>
+                        {vehicleid}
                     </ListGroup.Item>
                     )
                 }

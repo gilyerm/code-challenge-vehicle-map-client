@@ -3,7 +3,7 @@ import 'fetch-json';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 
-import {Button, Col, Container, Row} from 'react-bootstrap';
+import {Col, Container, Row} from 'react-bootstrap';
 
 import './App.css';
 
@@ -17,19 +17,16 @@ class App extends React.Component{
   path = "https://gilyerm-vehicle-map-server.herokuapp.com/";
   // path = "http://localhost:9000/";
 
-  fullVehicles = [];  // full list of vehicles
   constructor(props, context) {
     super(props, context);
-      this.state = { vehicles : [] , isFull : true};  // vehicles : all vehicles that need to show
-                                                      // isFull: is that the full list of the vehicles
+      this.state = { latLngs : [] , ids : [] , selectedVehicle : undefined };
   }
 
   callAPI(){
     fetch(this.path)
         .then(res => res.json())
         .then(res =>  {
-          this.setState({ vehicles : res , isFull : true});
-          this.fullVehicles = res; // full list of vehicles are saved for future calls
+          this.setState({ latLngs : res });
         })
   }
 
@@ -38,36 +35,41 @@ class App extends React.Component{
   }
 
   render() {
-    let selectedFunction = (selectedVehicle) => {this.setState({selectedVehicle : selectedVehicle})};
+    let selectedFunction = (selectedVehicleid) => {
+        fetch(this.path+"get/?id="+JSON.stringify(selectedVehicleid)) // send request to server to get selected vehicle data
+            .then(res => res.json())
+            .then(res =>  {
+                if (res === undefined || res.length<1) return;
+                this.setState({selectedVehicle : res[0]})
+            });
+
+    };
     let polygonFunction = (coordinates) =>{
       if (coordinates.length < 3) return; // re-render data only if there is 3 coordinates selected in the map
-      fetch(this.path+"query/?data="+JSON.stringify(coordinates)) // send request to server to get all vehicles that inside the polygon
+      fetch(this.path+"query/?data="+JSON.stringify(coordinates)) // send request to server to get all vehicles ids that inside the polygon
           .then(res => res.json())
           .then(res =>  {
-            this.setState({ vehicles : res , isFull : false});
+            this.setState({ ids : res});
           });
     };
     return (
         <div className="App">
             <Container>
-              <Row>
-                <Col sm={7}>
-                  <VehicleMap vehicles={this.state.vehicles} isFull={this.state.isFull} selectedFunction={selectedFunction} polygonFunction = {polygonFunction}/>
-                </Col>
-                <Col sm={5} className="scroller">
-                  <VehicleList vehicles={this.state.vehicles} selectedFunction={selectedFunction}/>
-                </Col>
-              </Row>
-              <Row>
-                <Col sm={12}>
-                  <VehicleDetail selectedVehicle = {this.state.selectedVehicle}/>
-                </Col>
-              </Row>
-              <Row>
-                <Button variant="secondary" size="lg" block active onClick={()=>this.setState({ vehicles : this.fullVehicles , isFull : true})}>
-                  Reset Map
-                </Button>
-              </Row>
+                <Row>
+                    <Col>
+                        <VehicleMap vehicles={this.state.latLngs}  polygonFunction = {polygonFunction}/>
+                    </Col>
+                </Row>
+                <Row>
+                    <Col className="scroller">
+                        <VehicleList ids={this.state.ids} selectedFunction={selectedFunction}/>
+                    </Col>
+                </Row>
+                <Row>
+                    <Col>
+                        <VehicleDetail selectedVehicle = {this.state.selectedVehicle}/>
+                    </Col>
+                </Row>
             </Container>
         </div>
     );

@@ -9,14 +9,12 @@ class VehicleMap extends React.Component {
 
     vehicles = [];
     map;
-    selectedFunction;
     polygonFunction;
     polygon = undefined;
     layerMarker = undefined;
     constructor(props, context) {
         super(props, context);
         this.vehicles = props.vehicles;
-        this.selectedFunction = props.selectedFunction;
         this.polygonFunction = props.polygonFunction;
     }
 
@@ -35,14 +33,11 @@ class VehicleMap extends React.Component {
         const polygon = this.polygon = L.polygon([]).addTo(this.map);
         const polygonFunction = this.polygonFunction;
 
-        function showVehiclesInsidePolygon(latLngs) {
-            latLngs = latLngs.map((latlng)=> [latlng.lat,latlng.lng]);
-            polygonFunction(latLngs); // show only Vehicles the inside the polygon
-        }
-
         function onMapClick(e) {
             polygon.addLatLng(e.latlng);
-            showVehiclesInsidePolygon(polygon.getLatLngs()[0]);
+            let latLngs = polygon.getLatLngs()[0];
+            latLngs = latLngs.map((latlng)=> [latlng.lat,latlng.lng]);
+            polygonFunction(latLngs); // show only Vehicles the inside the polygon
         }
 
         this.map.on('click', onMapClick);
@@ -66,9 +61,7 @@ class VehicleMap extends React.Component {
         if (this.layerMarker !== undefined){ this.layerMarker.remove();} // remove old markers (layer) from map
         this.layerMarker = L.layerGroup().addTo(this.map);
         for(let vehicle of this.vehicles){
-            let marker = L.marker([vehicle.lat,vehicle.lng],
-                { title: vehicle.id });
-            marker.on('click',()=>{this.selectedFunction(vehicle)});
+            let marker = L.marker([vehicle.lat,vehicle.lng]);
             marker.addTo(this.layerMarker)
         }
     }
