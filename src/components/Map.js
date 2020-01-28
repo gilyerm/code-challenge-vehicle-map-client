@@ -10,10 +10,13 @@ class Map extends React.Component {
     vehicles = [];
     map;
     selectedFunction;
+    polygonFunction;
+    polygon = undefined;
     constructor(props, context) {
         super(props, context);
         this.vehicles = props.vehicles;
-        this.selectedFunction = props.selectedFunction
+        this.selectedFunction = props.selectedFunction;
+        this.polygonFunction = props.polygonFunction;
     }
 
     componentDidMount() {
@@ -27,26 +30,48 @@ class Map extends React.Component {
                 }),
             ]
         });
+
+
+        let mymap = this.map;
+        this.polygon = L.polygon([]).addTo(mymap);
+        let polygon = this.polygon;
+
+        const polygonFunction = this.polygonFunction;
+        function showVehiclesInsidePolygon(latLngs) {
+            latLngs= latLngs.map((latlng)=> [latlng.lat,latlng.lng]);
+            polygonFunction(latLngs);
+        }
+
+        function onMapClick(e) {
+            polygon.addLatLng(e.latlng);
+            showVehiclesInsidePolygon(polygon.getLatLngs()[0]);
+        }
+
+        mymap.on('click', onMapClick);
     }
+
+
 
     shouldComponentUpdate(nextProps, nextState, nextContext) {
         if (this.vehicles === nextProps.vehicles){
             return false;
         }else{
             this.vehicles = nextProps.vehicles;
+            if (nextProps.isFull) { this.polygon.setLatLngs([])}
             this.updateView();
             return true;
         }
     }
 
+    layer;
     updateView(){
-        let layer = L.layerGroup().addTo(this.map);
-
+        if (this.layer !== undefined){ this.layer.remove();}
+        this.layer = L.layerGroup().addTo(this.map);
         for(let vehicle of this.vehicles){
             let marker = L.marker(vehicle.location,
                 { title: vehicle.id });
             marker.on('click',()=>{this.selectedFunction(vehicle)});
-            marker.addTo(layer)
+            marker.addTo(this.layer)
         }
     }
 
