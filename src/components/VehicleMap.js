@@ -5,13 +5,14 @@ import '../App.css'
 import {Helmet} from "react-helmet";
 
 
-class Map extends React.Component {
+class VehicleMap extends React.Component {
 
     vehicles = [];
     map;
     selectedFunction;
     polygonFunction;
     polygon = undefined;
+    layerMarker = undefined;
     constructor(props, context) {
         super(props, context);
         this.vehicles = props.vehicles;
@@ -31,15 +32,12 @@ class Map extends React.Component {
             ]
         });
 
-
-        let mymap = this.map;
-        this.polygon = L.polygon([]).addTo(mymap);
-        let polygon = this.polygon;
-
+        const polygon = this.polygon = L.polygon([]).addTo(this.map);
         const polygonFunction = this.polygonFunction;
+
         function showVehiclesInsidePolygon(latLngs) {
-            latLngs= latLngs.map((latlng)=> [latlng.lat,latlng.lng]);
-            polygonFunction(latLngs);
+            latLngs = latLngs.map((latlng)=> [latlng.lat,latlng.lng]);
+            polygonFunction(latLngs); // show only Vehicles the inside the polygon
         }
 
         function onMapClick(e) {
@@ -47,7 +45,7 @@ class Map extends React.Component {
             showVehiclesInsidePolygon(polygon.getLatLngs()[0]);
         }
 
-        mymap.on('click', onMapClick);
+        this.map.on('click', onMapClick);
     }
 
 
@@ -57,21 +55,21 @@ class Map extends React.Component {
             return false;
         }else{
             this.vehicles = nextProps.vehicles;
-            if (nextProps.isFull) { this.polygon.setLatLngs([])}
+            if (nextProps.isFull) { this.polygon.setLatLngs([])} // hide/remove polygon shape from map if get the full list
             this.updateView();
             return true;
         }
     }
 
-    layer;
+
     updateView(){
-        if (this.layer !== undefined){ this.layer.remove();}
-        this.layer = L.layerGroup().addTo(this.map);
+        if (this.layerMarker !== undefined){ this.layerMarker.remove();} // remove old markers (layer) from map
+        this.layerMarker = L.layerGroup().addTo(this.map);
         for(let vehicle of this.vehicles){
             let marker = L.marker(vehicle.location,
                 { title: vehicle.id });
             marker.on('click',()=>{this.selectedFunction(vehicle)});
-            marker.addTo(this.layer)
+            marker.addTo(this.layerMarker)
         }
     }
 
@@ -86,4 +84,4 @@ class Map extends React.Component {
     }
 }
 
-export default Map;
+export default VehicleMap;

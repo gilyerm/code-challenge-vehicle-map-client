@@ -19,7 +19,7 @@ class VehicleDetail extends React.Component{
     }
 
     render() {
-        if (this.selectedVehicle === undefined){
+        if (this.selectedVehicle === undefined){  // show if there isn't selected vehicle
             return <Alert variant="info">Select vehicle to display</Alert>
         }
         let vehicle = this.selectedVehicle;
