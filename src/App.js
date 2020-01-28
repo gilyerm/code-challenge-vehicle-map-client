@@ -15,6 +15,7 @@ import VehicleDetail from "./components/VehicleDetail";
 class App extends React.Component{
 
   path = "https://gilyerm-vehicle-map-server.herokuapp.com/";
+  // path = "http://localhost:9000/";
 
   fullVehicles = [];  // full list of vehicles
   constructor(props, context) {
